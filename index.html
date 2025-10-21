@@ -1,0 +1,259 @@
+<div class="container">
+    <form action="/register" method="POST">
+
+        <h2>Registration Form</h2>
+
+        <label for="full-name">Full name</label>
+        <input type="text" id="full-name" name="full_name" placeholder="Enter your name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your Email" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" name="dob" placeholder="DD/MM/YYYY" required>
+
+        <button type="submit">Register</button>
+
+        <p>Already have an account? <a href="/login">Login</a></p>
+    </form>
+</div>
+
+<style>
+    /* Basic Reset and Body Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        /* Light background for the whole page */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        /* Full viewport height */
+        margin: 0;
+    }
+
+    /* Container for the Form */
+    .container {
+        background-color: #ffffff;
+        /* White background for the form box */
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        /* Subtle shadow for depth */
+        width: 100%;
+        max-width: 400px;
+        /* Maximum width for the form */
+    }
+
+    /* Form Heading */
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 25px;
+        font-size: 1.8em;
+        font-weight: 600;
+        color: #007bff;
+        /* Blue color for the heading, similar to the image */
+    }
+
+    /* Label Styling */
+    label {
+        display: block;
+        /* Makes the label take its own line */
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+        font-size: 0.95em;
+    }
+
+    /* Input Fields and Date Picker */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"] {
+        width: 100%;
+        /* Full width within the container */
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        /* Includes padding and border in the element's total width and height */
+        font-size: 1em;
+    }
+
+    /* Input Placeholder Styling */
+    input::placeholder {
+        color: #aaa;
+        font-style: italic;
+    }
+
+    /* Button Styling (Register) */
+    button[type="submit"] {
+        width: 100%;
+        background-color: #007bff;
+        /* Blue background */
+        color: white;
+        padding: 12px 20px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+        /* Darker blue on hover */
+    }
+
+    /* Login Link Paragraph */
+    p {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    p a {
+        color: #007bff;
+        /* Blue for the link */
+        text-decoration: none;
+        /* Remove underline */
+        font-weight: bold;
+    }
+
+    p a:hover {
+        text-decoration: underline;
+    }
+
+    /* Optional: Validation Feedback (for JavaScript use) */
+    .error-message {
+        color: red;
+        font-size: 0.85em;
+        margin-top: -15px;
+        margin-bottom: 15px;
+        display: none;
+        /* Initially hidden */
+    }
+</style>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', (event) => {
+            // Prevent the form from submitting normally
+            event.preventDefault();
+
+            // Clear previous error messages
+            clearErrors();
+
+            // Perform validation
+            if (validateForm()) {
+                // If validation passes, you would typically submit the form
+                // form.submit(); // Uncomment this line to submit the form
+
+                // For demonstration, show a success alert
+                alert('Registration Successful! (Form was prevented from submitting for demo)');
+            }
+        });
+    });
+
+    /**
+     * Validates all form fields.
+     * @returns {boolean} True if all fields are valid, false otherwise.
+     */
+    function validateForm() {
+        let isValid = true;
+
+        // Get input values
+        const fullName = document.getElementById('full-name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const dob = document.getElementById('dob').value;
+
+        // 1. Full Name Validation
+        if (fullName === '') {
+            displayError('full-name', 'Full Name is required.');
+            isValid = false;
+        }
+
+        // 2. Email Validation (Basic format check)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email === '') {
+            displayError('email', 'Email is required.');
+            isValid = false;
+        } else if (!emailRegex.test(email)) {
+            displayError('email', 'Please enter a valid email address.');
+            isValid = false;
+        }
+
+        // 3. Password Validation (Min length 8)
+        if (password === '') {
+            displayError('password', 'Password is required.');
+            isValid = false;
+        } else if (password.length < 8) {
+            displayError('password', 'Password must be at least 8 characters.');
+            isValid = false;
+        }
+
+        // 4. Date of Birth Validation (Check for minimum age, e.g., 18)
+        if (dob === '') {
+            displayError('dob', 'Date of Birth is required.');
+            isValid = false;
+        } else {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            // Calculate age by subtracting 18 years from today's date
+            const ageLimit = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+            if (birthDate > ageLimit) {
+                displayError('dob', 'You must be at least 18 years old to register.');
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    }
+
+    /**
+     * Creates and displays an error message next to the specified input field.
+     * @param {string} fieldId - The ID of the input field.
+     * @param {string} message - The error message to display.
+     */
+    function displayError(fieldId, message) {
+        const inputElement = document.getElementById(fieldId);
+
+        // Create a new error message element
+        const errorElement = document.createElement('p');
+        errorElement.className = 'error-message';
+        errorElement.textContent = message;
+        errorElement.style.display = 'block'; // Make it visible
+
+        // Insert the error message right after the input element
+        inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+
+        // Optional: Add a visual indicator to the input itself
+        inputElement.style.borderColor = 'red';
+    }
+
+    /**
+     * Clears all currently displayed error messages and resets input borders.
+     */
+    function clearErrors() {
+        // Remove all existing error messages
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+        // Reset all input borders
+        document.querySelectorAll('input').forEach(input => {
+            input.style.borderColor = ''; // Reset to default/CSS value
+        });
+    }
+</script>
